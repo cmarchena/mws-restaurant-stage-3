@@ -1,0 +1,23 @@
+{
+  "name": "mws-restaurant-stage-1",
+  "version": "1.0.0",
+  "description": "WARNING\r I have change the server to 3001 due to Windows 10 permissions to port 8000\r Use python -m http.server 3001 to start server from /src",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmarchena/mws-restaurant-stage-1.git"
+  },
+  "author": "Carlos Marchena",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cmarchena/mws-restaurant-stage-1/issues"
+  },
+  "homepage": "https://github.com/cmarchena/mws-restaurant-stage-1#readme",
+  "dependencies": {
+    "grunt": "^1.0.2",
+    "grunt-responsive-images": "^1.10.1"
+  }
+}
