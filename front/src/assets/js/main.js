@@ -1,12 +1,14 @@
 // Service Worker
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
-    .register("/sw.js", { scope: '/' })
-    .then(function(reg) {
+    .register("/sw.js", {
+      scope: '/'
+    })
+    .then(function (reg) {
       // registration worked
       console.log("Registration succeeded. Scope is " + reg.scope);
     })
-    .catch(function(error) {
+    .catch(function (error) {
       // registration failed
       console.log("Registration failed with " + error);
     });
@@ -95,7 +97,7 @@ window.initMap = () => {
     zoom: 12,
     center: loc,
     scrollwheel: false
-})
+  })
 
   updateRestaurants();
 }
@@ -161,7 +163,7 @@ createRestaurantHTML = (restaurant) => {
   picture.innerHTML = `<source media="(min-width: 1024px)" srcset="${srcsetDesktop}">
   <source media="(min-width: 728px)" srcset="${srcsetTablet}">
   <img src="${srcsetMobile}" class="restaurant-img" alt="${restaurant.name} ${restaurant.cuisine_type} food restaurant New York City">`;
-  
+
   li.append(picture);
   // TODO PROJECT REVIEW
   // Correct restaurant's name semantic mistake in index.html
