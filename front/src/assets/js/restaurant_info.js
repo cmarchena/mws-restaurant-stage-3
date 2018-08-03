@@ -1,12 +1,14 @@
 // Service Worker
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
-    .register("/sw.js", { scope: '/' })
-    .then(function(reg) {
+    .register("/sw.js", {
+      scope: '/'
+    })
+    .then(function (reg) {
       // registration worked
       console.log("Registration succeeded. Scope is " + reg.scope);
     })
-    .catch(function(error) {
+    .catch(function (error) {
       // registration failed
       console.log("Registration failed with " + error);
     });
@@ -68,6 +70,9 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
+
+
+
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
@@ -78,7 +83,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   picture.innerHTML = `<source media="(min-width: 1024px)" srcset="${srcsetDesktop}">
   <source media="(min-width: 728px)" srcset="${srcsetTablet}">
   <img src="${srcsetMobile}" class="restaurant-img" id="restaurant-img" alt="${restaurant.name} ${restaurant.cuisine_type} food restaurant New York City">`;
-  
+
 
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
@@ -162,12 +167,12 @@ createReviewHTML = (review) => {
  */
 // TODO PROJECT review
 // The <ul> that is the breadcrumb needs to have the appropriate aria structure. Link: https://www.w3.org/TR/wai-aria-practices/examples/breadcrumb/index.html
-fillBreadcrumb = (restaurant=self.restaurant) => {
+fillBreadcrumb = (restaurant = self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   breadcrumb.setAttribute("aria-label", "Breadcrumb");
   const breadcrumbUl = document.getElementById("breadcrumb-ul");
   const li = document.createElement('li');
-  
+
   li.innerHTML = `<a href="http://localhost:3001/restaurant.html?id=${restaurant.id}" aria-current="page">${restaurant.name}</a>`;
   breadcrumbUl.appendChild(li);
 }

@@ -133,6 +133,8 @@ resetRestaurants = (restaurants) => {
   self.restaurants = [];
   const ul = document.getElementById('restaurants-list');
   ul.innerHTML = '';
+  ul.className = "grid";
+
 
   // Remove all map markers
   self.markers.forEach(m => m.setMap(null));
@@ -156,6 +158,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
+  li.className = "card";
   const picture = document.createElement('picture');
   const srcsetDesktop = DBHelper.imageUrlForRestaurantDesktop(restaurant);
   const srcsetTablet = DBHelper.imageUrlForRestaurantTablet(restaurant);
@@ -171,10 +174,50 @@ createRestaurantHTML = (restaurant) => {
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
   li.append(name);
+  const fav = document.createElement('span');
+  // fav.setAttribute('id', `fav-${restaurant.id}`)
+
+  if (restaurant.is_favorite === false || restaurant.is_favorite === undefined) {
+    fav.className = 'no-fav'
+
+  } else {
+    fav.className = 'yes-fav'
+
+  }
+
+
+
+  function toggleFav() {
+    if (restaurant.is_favorite === false || restaurant.is_favorite === undefined) {
+      const url = `http://localhost:1337/restaurants/${restaurant.id}/?is_favorite=true`
+      fetch(url, {
+          method: 'PUT'
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response));
+      this.classList.replace('no-fav', 'yes-fav')
+    } else {
+      const url = `http://localhost:1337/restaurants/${restaurant.id}/?is_favorite=false`
+      fetch(url, {
+          method: 'PUT'
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => console.log('Success:', response));
+      this.classList.replace('yes-fav', 'no-fav')
+    }
+
+
+  }
+
+  fav.addEventListener('click', toggleFav);
+
+  li.append(fav);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
   li.append(neighborhood);
+
+
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
