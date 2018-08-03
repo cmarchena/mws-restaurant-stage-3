@@ -158,13 +158,13 @@ class DBHelper {
    */
 
   static imageUrlForRestaurantMobile(restaurant) {
-    return (`assets/images/${restaurant.photograph}-mobile.jpg`);
+    return (`assets/img/${restaurant.photograph}-mobile.webp`);
   }
   static imageUrlForRestaurantTablet(restaurant) {
-    return (`assets/images/${restaurant.photograph}-tablet.jpg`);
+    return (`assets/img/${restaurant.photograph}-tablet.webp`);
   }
   static imageUrlForRestaurantDesktop(restaurant) {
-    return (`assets/images/${restaurant.photograph}-desktop.jpg`);
+    return (`assets/img/${restaurant.photograph}-desktop.webp`);
   }
   /**
    * Map marker for a restaurant.

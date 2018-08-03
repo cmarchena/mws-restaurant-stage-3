@@ -1,6 +1,11 @@
 @charset "utf-8";
 /* CSS Document */
 
+@font-face {
+  font-family: 'Inconsolata';
+  src: url('../fonts/Inconsolata-Bold.ttf') format('truetype'), url('../fonts/Inconsolata-Regular.ttf') format('truetype'),
+}
+
 :root {
   --primary-color: #F78154;
   --secondary-color: #4D9078;

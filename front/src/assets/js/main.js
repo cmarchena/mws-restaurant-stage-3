@@ -177,7 +177,7 @@ createRestaurantHTML = (restaurant) => {
   const fav = document.createElement('span');
   // fav.setAttribute('id', `fav-${restaurant.id}`)
 
-  if (restaurant.is_favorite === false || restaurant.is_favorite === undefined) {
+  if (restaurant.is_favorite === 'false' || restaurant.is_favorite === undefined) {
     fav.className = 'no-fav'
 
   } else {
@@ -188,7 +188,7 @@ createRestaurantHTML = (restaurant) => {
 
 
   function toggleFav() {
-    if (restaurant.is_favorite === false || restaurant.is_favorite === undefined) {
+    if (restaurant.is_favorite === 'false') {
       const url = `http://localhost:1337/restaurants/${restaurant.id}/?is_favorite=true`
       fetch(url, {
           method: 'PUT'
