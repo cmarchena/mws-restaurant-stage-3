@@ -1,0 +1,13 @@
+{
+    "files": [
+        "src/assets/js/dbhelper.ts",
+        "src/assets/js/index.ts",
+        "src/assets/js/restaurant-detail.ts"
+
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "es5",
+        "lib": ["es5", "es6", "es7", "dom"]
+    }
+}

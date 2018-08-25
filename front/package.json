@@ -1,33 +1,37 @@
 {
-  "name": "mws-restaurant-stage-1",
+  "name": "udacity-mws-project-3",
   "version": "1.0.0",
-  "description": "WARNING\r I have change the server to 3001 due to Windows 10 permissions to port 8000\r Use python -m http.server 3001 to start server from /src",
+  "description": "Final project for MWS",
   "main": "index.js",
-  "scripts": {
-    "start": "webpack --config webpack.config.js",
-    "build": "webpack"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cmarchena/mws-restaurant-stage-1.git"
-  },
+  "repository": "https://github.com/cmarchena/gulp-typescript-starter.git",
   "author": "Carlos Marchena",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cmarchena/mws-restaurant-stage-1/issues"
-  },
-  "homepage": "https://github.com/cmarchena/mws-restaurant-stage-1#readme",
-  "dependencies": {
-    "css-loader": "^1.0.0",
-    "grunt": "^1.0.2",
-    "grunt-responsive-images": "^1.10.1",
-    "imagemin": "^6.0.0",
-    "imagemin-webp": "^4.1.0",
-    "style-loader": "^0.21.0",
-    "webpack": "^4.16.2",
-    "webpack-cli": "^3.1.0"
-  },
   "devDependencies": {
-    "grunt-webp": "0.0.4"
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browser-sync": "^2.24.6",
+    "browserify": "^16.2.2",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-cache": "^1.0.2",
+    "gulp-changed": "^3.2.0",
+    "gulp-csso": "^3.0.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "gulp-uglify": "^3.0.1",
+    "gulp-util": "^3.0.8",
+    "tsify": "^4.0.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.0"
+  },
+  "dependencies": {
+    "@types/googlemaps": "^3.30.11",
+    "idb": "^2.1.3"
   }
 }
