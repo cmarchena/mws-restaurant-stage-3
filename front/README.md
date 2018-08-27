@@ -1,5 +1,7 @@
-WARNING
-I have changed the server to 3001 due to Windows 10 permissions to port 8000
-Use python -m SimpleHTTPServer 3001 to start server from /src
+#Mobile Web Specialist final project
+
+There are still some tips from reviewer to add, I dockerized the app and deployed it to ZEIT Now
+
+The URL is https://cmarchena-mws3.now.sh/
 
 Carlos Marchena
