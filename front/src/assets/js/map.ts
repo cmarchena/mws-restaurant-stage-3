@@ -3,13 +3,13 @@ declare var google: any;
 export default function initMap(locations: any) {
 
     const loc = {
-        lat: 40.712216,
+        lat: 40.722216,
         lng: -73.987501,
     };
 
     const map = new google.maps.Map(
         document.getElementById("map"), {
-            zoom: 12, center: loc,
+            zoom: 11, center: loc,
             scrollwheel: false,
         });
 
