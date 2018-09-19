@@ -24,10 +24,14 @@ var locations = [];
  * Fetch all neighborhoods and set their HTML.
  */
 var indexPage = function () {
+    initialLoad();
     fetchNeighborhoods();
     fetchCuisines();
     fillRestaurantsHTML("", "");
     updateRestaurants();
+};
+var initialLoad = function () {
+    dbhelper_1.default.storedRestaurants();
 };
 var fetchNeighborhoods = function () {
     dbhelper_1.default.readAllRestaurants().then(function (restaurants) {
@@ -84,13 +88,11 @@ var updateRestaurants = function () {
     };
     var fetchCuisine = document.getElementById("cuisines-select").addEventListener("change", function (e) {
         var cuisine = e.target.value;
-        console.log(e.target.value);
         state.cuisine = cuisine;
         changeDOM();
     });
     var fetchNeighborhood = document.getElementById("neighborhoods-select").addEventListener("change", function (e) {
         var neighborhood = e.target.value;
-        console.log(e.target.value);
         state.neighborhood = neighborhood;
         changeDOM();
     });
@@ -98,10 +100,15 @@ var updateRestaurants = function () {
         document.getElementById("restaurants-list").innerHTML = "";
         fillRestaurantsHTML(state.cuisine, state.neighborhood);
         locations = [];
-        console.log("Arriba", locations);
     };
 };
 var fillRestaurantsHTML = function (cuisine, neighborhood) {
+    window.addEventListener('offline', function (e) {
+        var el = document.getElementById("header");
+        var p = document.createElement('p');
+        p.innerText = "You're currently online";
+        el.appendChild(p);
+    });
     dbhelper_1.default.readAllRestaurants().then(function (restaurants) {
         var ul = document.getElementById("restaurants-list");
         var selectedNeighborhood = neighborhood;
@@ -132,13 +139,13 @@ var fillRestaurantsHTML = function (cuisine, neighborhood) {
             });
             showMap(locations);
         }
-        console.log("Abajo", locations);
     });
 };
 /**
  * Create restaurant HTML.
  */
 var createRestaurantHTML = function (restaurant) {
+    console.log(restaurant.name, restaurant.is_favorite);
     var li = document.createElement("li");
     li.className = "card";
     var picture = document.createElement("picture");
@@ -155,6 +162,7 @@ var createRestaurantHTML = function (restaurant) {
     li.appendChild(name);
     var fav = document.createElement("span");
     var isFav = restaurant.is_favorite;
+    var restId = restaurant.id;
     if (isFav === "true") {
         fav.classList.add("yes-fav");
         fav.classList.remove("no-fav");
@@ -165,32 +173,53 @@ var createRestaurantHTML = function (restaurant) {
         fav.classList.remove("yes-fav");
         fav.setAttribute("aria-label", "marked as no favorite");
     }
-    function toggleFav() {
-        if (fav.className === "no-fav") {
-            var url_1 = dbhelper_1.default.DATABASE_URL() + "/restaurants/" + restaurant.id + "/?is_favorite=true";
-            fetch(url_1, {
-                method: "PUT",
-                mode: "cors",
-            }).then(function (res) { return res.json(); })
-                .catch(function (error) { return console.error("Error:", error); })
-                .then(function (response) { return console.log("Success:", response, url_1); });
-            this.classList.replace("no-fav", "yes-fav");
-            this.removeAttribute("aria-label");
-            this.setAttribute("aria-label", "marked as favorite");
+    window.addEventListener('online', function (e) {
+        console.log('online');
+        if (isFav === "true") {
+            fav.classList.add("yes-fav");
+            fav.classList.remove("no-fav");
+            fav.setAttribute("aria-label", "marked as favorite");
         }
         else {
-            var url_2 = dbhelper_1.default.DATABASE_URL() + "/restaurants/" + restaurant.id + "/?is_favorite=false";
-            fetch(url_2, {
-                method: "PUT",
-                mode: "cors",
-            }).then(function (res) { return res.json(); })
-                .catch(function (error) { return console.error("Error:", error); })
-                .then(function (response) { return console.log("Success:", response, url_2); });
-            this.classList.replace("yes-fav", "no-fav");
-            this.removeAttribute("aria-label");
-            this.setAttribute("aria-label", "marked as no favorite");
+            fav.classList.add("no-fav");
+            fav.classList.remove("yes-fav");
+            fav.setAttribute("aria-label", "marked as no favorite");
         }
-    }
+    });
+    /* window.addEventListener('offline', function (e) {
+        console.log('offline');
+        if (isFav === "true") {
+
+            fav.classList.add("yes-fav-offline");
+            fav.setAttribute("tooltip", "tooltip");
+            fav.setAttribute("tooltip-position", "right");
+            fav.classList.remove("no-fav");
+            fav.setAttribute("aria-label", "marked as favorite, currently offline");
+
+        } else {
+            fav.classList.add("no-fav-offline");
+            fav.setAttribute("tooltip", "tooltip");
+            fav.setAttribute("tooltip-position", "right");
+            fav.classList.remove("yes-fav");
+            fav.setAttribute("aria-label", "marked as no favorite, currently offline");
+
+        }
+
+    }); */
+    var toggleFav = function () {
+        if (fav.className === "no-fav") {
+            dbhelper_1.default.updateFav(restId, 'true');
+            fav.classList.replace("no-fav", "yes-fav");
+            fav.removeAttribute("aria-label");
+            fav.setAttribute("aria-label", "marked as favorite");
+        }
+        else {
+            dbhelper_1.default.updateFav(restId, 'false');
+            fav.classList.replace("yes-fav", "no-fav");
+            fav.removeAttribute("aria-label");
+            fav.setAttribute("aria-label", "marked as no favorite");
+        }
+    };
     fav.addEventListener("click", toggleFav);
     li.appendChild(fav);
     var neighborhood = document.createElement("p");

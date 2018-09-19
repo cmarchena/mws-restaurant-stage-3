@@ -673,6 +673,67 @@ textarea {
   cursor: pointer;
 }
 
+.no-fav-offline:after {
+  content: url('../images/no-fav.svg');
+  opacity: 80%;
+  margin-left: 1em;
+  cursor: not-allowed
+}
+
+.yes-fav-offline:after {
+  content: url('../images/yes-fav.svg');
+  opacity: 80%;
+  margin-left: 1em;
+  cursor: not-allowed;
+}
+
+[tooltip] {
+  margin: 20px;
+  position: relative;
+}
+
+[tooltip]::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px 6px 0 6px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.7) transparent transparent transparent;
+  z-index: 100;
+}
+
+[tooltip]::after {
+  content: attr(tooltip);
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%) translateY(-100%);
+  background: rgba(0, 0, 0, 0.7);
+  text-align: center;
+  color: #fff;
+  padding: 4px 2px;
+  font-size: 12px;
+  min-width: 80px;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+[tooltip-position='right']::before {
+  left: 100%;
+  top: 50%;
+  margin-left: 1px;
+  transform: translatey(-50%) rotate(90deg)
+}
+
+[tooltip-position='right']::after {
+  left: 100%;
+  top: 50%;
+  margin-left: 8px;
+  transform: translateX(0%) translateY(-50%);
+}
+
 .error {
   background-color: tomato;
   padding: 2em;

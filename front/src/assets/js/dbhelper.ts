@@ -63,19 +63,16 @@ export default class DBHelper {
             });
     }
 
+
     public static readAllRestaurants = () => {
-        return DBHelper.storedRestaurants().then(() => {
-            return DBHelper.dbPromise().then((db) => {
-                return db.transaction("restaurants").objectStore("restaurants").getAll();
-            });
+        return DBHelper.dbPromise().then((db) => {
+            return db.transaction("restaurants").objectStore("restaurants").getAll();
         });
     }
 
     public static readRestaurantById = (id: number) => {
-        return DBHelper.storedRestaurants().then(() => {
-            return DBHelper.dbPromise().then((db) => {
-                return db.transaction("restaurants").objectStore("restaurants").get(id);
-            });
+        return DBHelper.dbPromise().then((db) => {
+            return db.transaction("restaurants").objectStore("restaurants").get(id);
         });
     }
     public static getReviewById = (id: number) => {
@@ -86,19 +83,19 @@ export default class DBHelper {
             .then((reviews) => reviews);
     }
     public static readReviewById = (id: number) => {
-        return DBHelper.storedReviews().then(() => {
-            return DBHelper.dbPromise().then((db) => {
-                return db.transaction("reviews").objectStore("reviews").index("id").get(id);
-            });
+
+        return DBHelper.dbPromise().then((db) => {
+            return db.transaction("reviews").objectStore("reviews").index("id").get(id);
         });
+
     }
 
     public static readAllReviews = () => {
-        return DBHelper.storedReviews().then(() => {
-            return DBHelper.dbPromise().then((db) => {
-                return db.transaction("reviews").objectStore("reviews").getAll();
-            });
+
+        return DBHelper.dbPromise().then((db) => {
+            return db.transaction("reviews").objectStore("reviews").getAll();
         });
+
     }
 
     public static urlForRestaurant = (restaurant: Restaurant) => {
@@ -114,6 +111,30 @@ export default class DBHelper {
         });
         return marker;
     }
+    public static updateFav = (restId: string, isFav: string) => {
+
+        const url = `${DBHelper.DATABASE_URL()}/restaurants/${restId}/?is_favorite=${isFav}`;
+        fetch(url, {
+            method: "PUT",
+            mode: "cors",
+        })
+            .then(() => {
+                return DBHelper.dbPromise().then((db) => {
+                    const tx = db.transaction("restaurants", "readwrite");
+                    const restStore = tx.objectStore("restaurants");
+                    restStore.get(restId)
+                        .then((restaurant) => {
+                            restaurant.is_favorite = isFav;
+
+                            restStore.put(restaurant);
+                            console.log("Changed IDB", restaurant.is_favorite, restaurant)
+                        });
+                });
+            });
+    }
+
+
+
     public static NEW_REVIEW = (data: object) => {
 
         if (navigator.onLine) {

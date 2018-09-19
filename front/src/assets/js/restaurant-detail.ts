@@ -12,9 +12,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
         return restaurantDetailsPage(id);
     }
 });
-
+const initialLoad = () => {
+    DBHelper.storedRestaurants();
+}
 const restDetail = (id: number) => {
     return DBHelper.readRestaurantById(id).then((restaurant: Restaurant) => {
+        console.log(restaurant.is_favorite);
         const locations = [];
         locations.push(restaurant.latlng);
         map(locations);
@@ -38,6 +41,7 @@ const restDetail = (id: number) => {
 
         const fav = document.createElement("span");
         const isFav = restaurant.is_favorite;
+        const restId = restaurant.id;
 
         if (isFav === "true") {
             fav.classList.add("yes-fav");
@@ -48,29 +52,22 @@ const restDetail = (id: number) => {
             fav.classList.remove("yes-fav");
             fav.setAttribute("aria-label", "marked as no favorite");
         }
-        function toggleFav() {
+
+        const toggleFav = () => {
             if (fav.className === "no-fav") {
-                const url = `${DBHelper.DATABASE_URL()}/restaurants/${restaurant.id}/?is_favorite=true`;
-                fetch(url, {
-                    method: "PUT",
-                    mode: "cors",
-                }).then((res) => res.json())
-                    .catch((error) => console.error("Error:", error))
-                    .then((response) => console.log("Success:", response, url));
-                this.classList.replace("no-fav", "yes-fav");
-                this.removeAttribute("aria-label");
-                this.setAttribute("aria-label", "marked as favorite");
+
+                DBHelper.updateFav(restId, 'true');
+
+                fav.classList.replace("no-fav", "yes-fav");
+                fav.removeAttribute("aria-label");
+                fav.setAttribute("aria-label", "marked as favorite");
             } else {
-                const url = `${DBHelper.DATABASE_URL()}/restaurants/${restaurant.id}/?is_favorite=false`;
-                fetch(url, {
-                    method: "PUT",
-                    mode: "cors",
-                }).then((res) => res.json())
-                    .catch((error) => console.error("Error:", error))
-                    .then((response) => console.log("Success:", response, url));
-                this.classList.replace("yes-fav", "no-fav");
-                this.removeAttribute("aria-label");
-                this.setAttribute("aria-label", "marked as no favorite");
+
+                DBHelper.updateFav(restId, 'false');
+
+                fav.classList.replace("yes-fav", "no-fav");
+                fav.removeAttribute("aria-label");
+                fav.setAttribute("aria-label", "marked as no favorite");
             }
 
         }
@@ -162,6 +159,7 @@ const addReview = (e: any) => {
 
 };
 const restaurantDetailsPage = (id: number) => {
+    initialLoad();
     restDetail(id);
 
     showReviews(id);

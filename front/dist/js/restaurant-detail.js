@@ -9,8 +9,12 @@ document.addEventListener("DOMContentLoaded", function (event) {
         return restaurantDetailsPage(id);
     }
 });
+var initialLoad = function () {
+    dbhelper_1.default.storedRestaurants();
+};
 var restDetail = function (id) {
     return dbhelper_1.default.readRestaurantById(id).then(function (restaurant) {
+        console.log(restaurant.is_favorite);
         var locations = [];
         locations.push(restaurant.latlng);
         map_1.default(locations);
@@ -25,6 +29,7 @@ var restDetail = function (id) {
         name.innerHTML = "\n        " + restaurant.name + "\n        ";
         var fav = document.createElement("span");
         var isFav = restaurant.is_favorite;
+        var restId = restaurant.id;
         if (isFav === "true") {
             fav.classList.add("yes-fav");
             fav.classList.remove("no-fav");
@@ -35,32 +40,20 @@ var restDetail = function (id) {
             fav.classList.remove("yes-fav");
             fav.setAttribute("aria-label", "marked as no favorite");
         }
-        function toggleFav() {
+        var toggleFav = function () {
             if (fav.className === "no-fav") {
-                var url_1 = dbhelper_1.default.DATABASE_URL() + "/restaurants/" + restaurant.id + "/?is_favorite=true";
-                fetch(url_1, {
-                    method: "PUT",
-                    mode: "cors",
-                }).then(function (res) { return res.json(); })
-                    .catch(function (error) { return console.error("Error:", error); })
-                    .then(function (response) { return console.log("Success:", response, url_1); });
-                this.classList.replace("no-fav", "yes-fav");
-                this.removeAttribute("aria-label");
-                this.setAttribute("aria-label", "marked as favorite");
+                dbhelper_1.default.updateFav(restId, 'true');
+                fav.classList.replace("no-fav", "yes-fav");
+                fav.removeAttribute("aria-label");
+                fav.setAttribute("aria-label", "marked as favorite");
             }
             else {
-                var url_2 = dbhelper_1.default.DATABASE_URL() + "/restaurants/" + restaurant.id + "/?is_favorite=false";
-                fetch(url_2, {
-                    method: "PUT",
-                    mode: "cors",
-                }).then(function (res) { return res.json(); })
-                    .catch(function (error) { return console.error("Error:", error); })
-                    .then(function (response) { return console.log("Success:", response, url_2); });
-                this.classList.replace("yes-fav", "no-fav");
-                this.removeAttribute("aria-label");
-                this.setAttribute("aria-label", "marked as no favorite");
+                dbhelper_1.default.updateFav(restId, 'false');
+                fav.classList.replace("yes-fav", "no-fav");
+                fav.removeAttribute("aria-label");
+                fav.setAttribute("aria-label", "marked as no favorite");
             }
-        }
+        };
         fav.addEventListener("click", toggleFav);
         name.appendChild(fav);
         var picture = document.getElementById("restaurant-picture");
@@ -117,6 +110,7 @@ var addReview = function (e) {
     dbhelper_1.default.NEW_REVIEW(data);
 };
 var restaurantDetailsPage = function (id) {
+    initialLoad();
     restDetail(id);
     showReviews(id);
 };

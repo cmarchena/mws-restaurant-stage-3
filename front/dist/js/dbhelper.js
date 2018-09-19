@@ -69,17 +69,13 @@ var DBHelper = /** @class */ (function () {
         });
     };
     DBHelper.readAllRestaurants = function () {
-        return DBHelper.storedRestaurants().then(function () {
-            return DBHelper.dbPromise().then(function (db) {
-                return db.transaction("restaurants").objectStore("restaurants").getAll();
-            });
+        return DBHelper.dbPromise().then(function (db) {
+            return db.transaction("restaurants").objectStore("restaurants").getAll();
         });
     };
     DBHelper.readRestaurantById = function (id) {
-        return DBHelper.storedRestaurants().then(function () {
-            return DBHelper.dbPromise().then(function (db) {
-                return db.transaction("restaurants").objectStore("restaurants").get(id);
-            });
+        return DBHelper.dbPromise().then(function (db) {
+            return db.transaction("restaurants").objectStore("restaurants").get(id);
         });
     };
     DBHelper.getReviewById = function (id) {
@@ -90,21 +86,36 @@ var DBHelper = /** @class */ (function () {
             .then(function (reviews) { return reviews; });
     };
     DBHelper.readReviewById = function (id) {
-        return DBHelper.storedReviews().then(function () {
-            return DBHelper.dbPromise().then(function (db) {
-                return db.transaction("reviews").objectStore("reviews").index("id").get(id);
-            });
+        return DBHelper.dbPromise().then(function (db) {
+            return db.transaction("reviews").objectStore("reviews").index("id").get(id);
         });
     };
     DBHelper.readAllReviews = function () {
-        return DBHelper.storedReviews().then(function () {
-            return DBHelper.dbPromise().then(function (db) {
-                return db.transaction("reviews").objectStore("reviews").getAll();
-            });
+        return DBHelper.dbPromise().then(function (db) {
+            return db.transaction("reviews").objectStore("reviews").getAll();
         });
     };
     DBHelper.urlForRestaurant = function (restaurant) {
         return ("./restaurant.html?id=" + restaurant.id);
+    };
+    DBHelper.updateFav = function (restId, isFav) {
+        var url = DBHelper.DATABASE_URL() + "/restaurants/" + restId + "/?is_favorite=" + isFav;
+        fetch(url, {
+            method: "PUT",
+            mode: "cors",
+        })
+            .then(function () {
+            return DBHelper.dbPromise().then(function (db) {
+                var tx = db.transaction("restaurants", "readwrite");
+                var restStore = tx.objectStore("restaurants");
+                restStore.get(restId)
+                    .then(function (restaurant) {
+                    restaurant.is_favorite = isFav;
+                    restStore.put(restaurant);
+                    console.log("Changed IDB", restaurant.is_favorite, restaurant);
+                });
+            });
+        });
     };
     DBHelper.NEW_REVIEW = function (data) {
         if (navigator.onLine) {

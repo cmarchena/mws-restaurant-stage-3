@@ -10,7 +10,9 @@ if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/sw.js");
     });
 }
+
 // End Service Worker
+
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
@@ -28,13 +30,16 @@ let locations: string[] = [];
  */
 
 const indexPage = () => {
+    initialLoad();
     fetchNeighborhoods();
     fetchCuisines();
     fillRestaurantsHTML("", "");
-
     updateRestaurants();
 
 };
+const initialLoad = () => {
+    DBHelper.storedRestaurants();
+}
 const fetchNeighborhoods = () => {
     DBHelper.readAllRestaurants().then((restaurants: Restaurant[]) => {
 
@@ -106,7 +111,6 @@ const updateRestaurants = () => {
     const fetchCuisine =
         document.getElementById("cuisines-select").addEventListener("change", (e) => {
             const cuisine = (e.target as HTMLSelectElement).value;
-            console.log((e.target as HTMLSelectElement).value);
             state.cuisine = cuisine;
             changeDOM();
 
@@ -114,7 +118,6 @@ const updateRestaurants = () => {
 
     const fetchNeighborhood = document.getElementById("neighborhoods-select").addEventListener("change", (e) => {
         const neighborhood = (e.target as HTMLSelectElement).value;
-        console.log((e.target as HTMLSelectElement).value);
         state.neighborhood = neighborhood;
         changeDOM();
 
@@ -125,12 +128,18 @@ const updateRestaurants = () => {
         document.getElementById("restaurants-list").innerHTML = "";
         fillRestaurantsHTML(state.cuisine, state.neighborhood);
         locations = [];
-        console.log("Arriba", locations);
+
     };
 };
 
 const fillRestaurantsHTML = (cuisine: any, neighborhood: any) => {
+    window.addEventListener('offline', function (e) {
+        const el = document.getElementById("header");
+        const p = document.createElement('p')
+        p.innerText = "You're currently online";
+        el.appendChild(p)
 
+    })
     DBHelper.readAllRestaurants().then((restaurants: any) => {
 
         const ul = document.getElementById("restaurants-list");
@@ -162,12 +171,15 @@ const fillRestaurantsHTML = (cuisine: any, neighborhood: any) => {
 
             filteredRestaurants.map((restaurant: Restaurant) => {
                 locations.push(restaurant.latlng);
-                ul.appendChild(createRestaurantHTML(restaurant)); return locations;
+                ul.appendChild(createRestaurantHTML(restaurant));
+
+                return locations;
+
             });
 
             showMap(locations);
         }
-        console.log("Abajo", locations);
+
 
     });
 };
@@ -175,7 +187,8 @@ const fillRestaurantsHTML = (cuisine: any, neighborhood: any) => {
 /**
  * Create restaurant HTML.
  */
-const createRestaurantHTML = (restaurant: any) => {
+const createRestaurantHTML = (restaurant: Restaurant) => {
+    console.log(restaurant.name, restaurant.is_favorite);
     const li = document.createElement("li");
     li.className = "card";
     const picture = document.createElement("picture");
@@ -198,6 +211,7 @@ const createRestaurantHTML = (restaurant: any) => {
     li.appendChild(name);
     const fav = document.createElement("span");
     const isFav = restaurant.is_favorite;
+    const restId = restaurant.id;
     if (isFav === "true") {
         fav.classList.add("yes-fav");
         fav.classList.remove("no-fav");
@@ -208,29 +222,56 @@ const createRestaurantHTML = (restaurant: any) => {
         fav.setAttribute("aria-label", "marked as no favorite");
     }
 
-    function toggleFav() {
-        if (fav.className === "no-fav") {
-            const url = `${DBHelper.DATABASE_URL()}/restaurants/${restaurant.id}/?is_favorite=true`;
-            fetch(url, {
-                method: "PUT",
-                mode: "cors",
-            }).then((res) => res.json())
-                .catch((error) => console.error("Error:", error))
-                .then((response) => console.log("Success:", response, url));
-            this.classList.replace("no-fav", "yes-fav");
-            this.removeAttribute("aria-label");
-            this.setAttribute("aria-label", "marked as favorite");
+    window.addEventListener('online', function (e) {
+        console.log('online');
+        if (isFav === "true") {
+            fav.classList.add("yes-fav");
+            fav.classList.remove("no-fav");
+            fav.setAttribute("aria-label", "marked as favorite");
         } else {
-            const url = `${DBHelper.DATABASE_URL()}/restaurants/${restaurant.id}/?is_favorite=false`;
-            fetch(url, {
-                method: "PUT",
-                mode: "cors",
-            }).then((res) => res.json())
-                .catch((error) => console.error("Error:", error))
-                .then((response) => console.log("Success:", response, url));
-            this.classList.replace("yes-fav", "no-fav");
-            this.removeAttribute("aria-label");
-            this.setAttribute("aria-label", "marked as no favorite");
+            fav.classList.add("no-fav");
+            fav.classList.remove("yes-fav");
+            fav.setAttribute("aria-label", "marked as no favorite");
+        }
+
+
+    });
+    /* window.addEventListener('offline', function (e) {
+        console.log('offline');
+        if (isFav === "true") {
+
+            fav.classList.add("yes-fav-offline");
+            fav.setAttribute("tooltip", "tooltip");
+            fav.setAttribute("tooltip-position", "right");
+            fav.classList.remove("no-fav");
+            fav.setAttribute("aria-label", "marked as favorite, currently offline");
+
+        } else {
+            fav.classList.add("no-fav-offline");
+            fav.setAttribute("tooltip", "tooltip");
+            fav.setAttribute("tooltip-position", "right");
+            fav.classList.remove("yes-fav");
+            fav.setAttribute("aria-label", "marked as no favorite, currently offline");
+
+        }
+
+    }); */
+
+    const toggleFav = () => {
+        if (fav.className === "no-fav") {
+
+            DBHelper.updateFav(restId, 'true');
+
+            fav.classList.replace("no-fav", "yes-fav");
+            fav.removeAttribute("aria-label");
+            fav.setAttribute("aria-label", "marked as favorite");
+        } else {
+
+            DBHelper.updateFav(restId, 'false');
+
+            fav.classList.replace("yes-fav", "no-fav");
+            fav.removeAttribute("aria-label");
+            fav.setAttribute("aria-label", "marked as no favorite");
         }
 
     }
@@ -256,7 +297,9 @@ const createRestaurantHTML = (restaurant: any) => {
     li.appendChild(more);
 
     return li;
+
 };
 const showMap = (locations: any) => {
     map(locations);
 };
+
